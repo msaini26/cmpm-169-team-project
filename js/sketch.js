@@ -13,6 +13,7 @@ const VALUE2 = 2;
 // Globals
 let myInstance;
 let canvasContainer;
+let sound; // sound object
 
 class MyClass {
     constructor(param1, param2) {
@@ -23,6 +24,11 @@ class MyClass {
     myMethod() {
         // code to run when method is called
     }
+}
+
+// preload() function is called once before setup() function
+function preload(){
+  sound = loadSound('assets/water_plop.wav'); // load sound file
 }
 
 // setup() function is called once when the program starts
