@@ -1,73 +1,84 @@
-// sketch.js - purpose and description here
-// Author: Your Name
-// Date:
+//  ==== NOTES ====
+//  - for water detection,...
+//    - inWater would go by true or false instead
+//    - collision function instead of keypress
+//    -Collision code between circle and rectangle
 
-// Here is how you might set up an OOP p5.js project
-// Note that p5.js looks for a file called sketch.js
+let x;
+let y;
+let yspeed;
 
-// Constants - User-servicable parts
-// In a longer project I like to put these in a separate file
-const VALUE1 = 1;
-const VALUE2 = 2;
+let fallMult;
+let bouyantMult;
+let currMult;
+let inWater;
 
-// Globals
-let myInstance;
-let canvasContainer;
-let sound; // sound object
+var cir;
+var sqr;
 
-class MyClass {
-    constructor(param1, param2) {
-        this.property1 = param1;
-        this.property2 = param2;
-    }
+var radius;
+var sqrWidth;
+var sqrHeight;
 
-    myMethod() {
-        // code to run when method is called
-    }
-}
 
-// preload() function is called once before setup() function
-function preload(){
-  sound = loadSound('assets/water_plop.wav'); // load sound file
-}
-
-// setup() function is called once when the program starts
 function setup() {
-    // place our canvas, making it fit our container
-    canvasContainer = $("#canvas-container");
-    let canvas = createCanvas(canvasContainer.width(), canvasContainer.height());
-    canvas.parent("canvas-container");
-    // resize canvas is the page is resized
-    $(window).resize(function() {
-        console.log("Resizing...");
-        resizeCanvas(canvasContainer.width(), canvasContainer.height());
-    });
-    // create an instance of the class
-    myInstance = new MyClass(VALUE1, VALUE2);
-
-    var centerHorz = windowWidth / 2;
-    var centerVert = windowHeight / 2;
+ 
+  createCanvas(400, 400);
+  x = width/2
+  y = height/2
+ 
+  fallMult = 1.01;
+  bouyantMult = 0.99;
+  currMult = fallMult;
+  inWater = -1;
+ 
+  yspeed = 0;
+ 
+  radius = 50;
+  sqrWidth = 400;
+  sqrHeight = 200;
+ 
 }
 
-// draw() function is called repeatedly, it's the main animation loop
 function draw() {
-    background(220);    
-    // call a method on the instance
-    myInstance.myMethod();
-
-    // Put drawings here
-    var centerHorz = canvasContainer.width() / 2 - 125;
-    var centerVert = canvasContainer.height() / 2 - 125;
-    fill(234, 31, 81);
-    noStroke();
-    rect(centerHorz, centerVert, 250, 250);
-    fill(255);
-    textStyle(BOLD);
-    textSize(140);
-    text("p5*", centerHorz + 10, centerVert + 200);
+ 
+  background(220);
+  sqr = rect(0, 200, sqrWidth, sqrHeight);
+ 
+  ellipse(x, y, 50, 50);    // draw the circle
+ 
+  // BOUYANCY -- floats up if in water, falls down if not
+  if (inWater == -1) {currMult = fallMult;}
+  else if (inWater = 1) {currMult = bouyantMult;}
+ 
+  // GRAVITY
+  yspeed += (currMult - 1) * deltaTime;
+  y+=yspeed;
+ 
+  // BOUNCING
+  if (y > height) {
+   
+      y = height;
+      yspeed *= -0.7;
+   
+  }
+ 
 }
 
-// mousePressed() function is called once after every time a mouse button is pressed
-function mousePressed() {
-    // code to run when mouse is pressed
+function keyPressed() {
+ 
+  if (key = ' ') {
+   
+    inWater *= -1;
+   
+  }
+ 
+  // if colliding with water : inWater = true
+  // else if NOT colliding with water : inWater = false
+  if((y + radius / 2) > sqrHeight){
+    console.log("Collision")
+    inWater = true;
+  }else{
+    inWater = false;
+  }
 }
