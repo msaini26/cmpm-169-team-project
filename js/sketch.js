@@ -21,6 +21,7 @@ var sqrWidth;
 var sqrHeight;
 
 let sound;
+let bubbles = [];
 
 function preload(){
   sound = loadSound('assets/water_plop.wav');
@@ -42,12 +43,25 @@ function setup() {
   radius = 50;
   sqrWidth = 400;
   sqrHeight = 200;
+  
+  // Create bubbles
+  for (let i = 0; i < 25; i++) {
+    bubbles.push(new Bubble());
+  }
  
 }
 
 function draw() {
  
-  background(220);
+  // Water Color
+  background(0, 150, 255);
+  
+  // Draw bubbles
+  for (let bubble of bubbles) {
+    bubble.display();
+    bubble.ascend();
+    bubble.update();
+  }  
   sqr = rect(0, 200, sqrWidth, sqrHeight);
 
   collisionDetection(); // check for collision with water
@@ -77,12 +91,42 @@ function collisionDetection(){ // check for collision with "water"
   if (collide && !sound.isPlaying()) { // if colliding with water : inWater = true
     console.log("Collision");
     inWater = true;
-    sound.play();
+    //sound.play();
   } else {
     inWater = false;
   }
 }
 
+// Bubble class
+class Bubble {
+  constructor() {
+    this.x = random(width);
+    this.y = random(height);
+    this.diameter = random(5, 20);
+    this.speed = random(0.5, 2);
+  }
+
+  ascend() {
+    this.y -= this.speed;
+    if (this.y < -this.diameter) {
+      this.y = height + this.diameter;
+    }
+  }
+
+  update() {
+    // Reset bubble position when it reaches top
+    if (this.y < 0) {
+      this.x = random(width);
+      this.y = height + this.diameter;
+    }
+  }
+
+  display() {
+    noStroke();
+    fill(255); // White bubbles
+    ellipse(this.x, this.y, this.diameter, this.diameter);
+  }
+}
 // function keyPressed() {
  
 //   if (key == ' ') {
