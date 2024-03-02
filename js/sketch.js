@@ -49,6 +49,8 @@ function draw() {
  
   background(220);
   sqr = rect(0, 200, sqrWidth, sqrHeight);
+
+  collisionDetection(); // check for collision with water
  
   ellipse(x, y, 50, 50);    // draw the circle
  
@@ -70,20 +72,31 @@ function draw() {
  
 }
 
-function keyPressed() {
- 
-  if (key == ' ') {
-   
-    inWater *= -1;
-   
-  }
- 
-  // if colliding with water : inWater = true
-  // else if NOT colliding with water : inWater = false
-  if((y + radius / 2) > sqrHeight){
-    console.log("Collision")
+function collisionDetection(){ // check for collision with "water"
+  var collide = (y > sqrHeight - radius/2);
+  if (collide && !sound.isPlaying()) { // if colliding with water : inWater = true
+    console.log("Collision");
     inWater = true;
-  }else{
+    sound.play();
+  } else {
     inWater = false;
   }
 }
+
+// function keyPressed() {
+ 
+//   if (key == ' ') {
+   
+//     inWater *= -1;
+   
+//   }
+ 
+//   // if colliding with water : inWater = true
+//   // else if NOT colliding with water : inWater = false
+//   if((y + radius / 2) > sqrHeight){
+//     console.log("Collision")
+//     inWater = true;
+//   }else{
+//     inWater = false;
+//   }
+// }
