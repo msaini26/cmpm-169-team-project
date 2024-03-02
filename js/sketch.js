@@ -20,6 +20,11 @@ var radius;
 var sqrWidth;
 var sqrHeight;
 
+let sound;
+
+function preload(){
+  sound = loadSound('assets/water_plop.wav');
+}
 
 function setup() {
  
@@ -49,7 +54,7 @@ function draw() {
  
   // BOUYANCY -- floats up if in water, falls down if not
   if (inWater == -1) {currMult = fallMult;}
-  else if (inWater = 1) {currMult = bouyantMult;}
+  else if (inWater == 1) {currMult = bouyantMult;}
  
   // GRAVITY
   yspeed += (currMult - 1) * deltaTime;
@@ -67,7 +72,7 @@ function draw() {
 
 function keyPressed() {
  
-  if (key = ' ') {
+  if (key == ' ') {
    
     inWater *= -1;
    
