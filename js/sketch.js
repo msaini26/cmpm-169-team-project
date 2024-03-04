@@ -26,11 +26,11 @@ var addPressed = false;
 var drainPressed = false;
 var fillHeight = 0;
 
-// let sound;
+let sound;
 let bubbles = [];
 
 function preload(){
-  // sound = loadSound('../assets/water_plop.wav');
+  sound = loadSound('../assets/water_plop.wav');
 }
 
 function setup() {
@@ -81,6 +81,11 @@ function setup() {
 }
 
 function draw() {
+  // Start the audio context on a click/touch event to prevent it from being blocked by browsers
+  if (getAudioContext().state !== 'running') {
+    getAudioContext().resume();
+  }
+
   // Water Color
   // background(0, 150, 255);
   background(255);
@@ -142,11 +147,11 @@ function draw() {
 
 function collisionDetection(){ // check for collision with "water"
   var collide = (y > sqrHeight - radius/2);
-  // if (collide && !sound.isPlaying()) { // if colliding with water : inWater = true
-  if (collide) { 
+  if (collide && !sound.isPlaying()) { // if colliding with water : inWater = true
+  //if (collide) { 
     console.log("Collision");
     inWater = true;
-    //sound.play();
+    sound.play();
   } else {
     inWater = false;
   }
