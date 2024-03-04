@@ -20,16 +20,25 @@ var radius;
 var sqrWidth;
 var sqrHeight;
 
-let sound;
+var isEmpty = true;
+var isFull = false;
+var addPressed = false;
+var drainPressed = false;
+var fillHeight = 0;
+
+// let sound;
 let bubbles = [];
 
 function preload(){
-  sound = loadSound('assets/water_plop.wav');
+  // sound = loadSound('../assets/water_plop.wav');
 }
 
 function setup() {
+  canvasContainer = $("#canvas-container");
+  let canvas = createCanvas(600, 600);
+  canvas.parent("canvas-container");
  
-  createCanvas(400, 400);
+  // createCanvas(600, 600);
   x = width/2
   y = height/2
  
@@ -48,13 +57,58 @@ function setup() {
   for (let i = 0; i < 25; i++) {
     bubbles.push(new Bubble());
   }
+
+  //add water button
+  let addButton = createButton('add water');
+  addButton.position(835, 135);
+
+  addButton.mousePressed(() => {
+    if(isEmpty) {
+      addPressed = true;
+    }
+  });
+
+  //drain water button
+  let drainButton = createButton('drain water');
+  drainButton.position(835, 165);
+
+  drainButton.mousePressed(() => {
+    if(isFull) {
+      drainPressed = true;
+    }
+  });
  
 }
 
 function draw() {
- 
   // Water Color
-  background(0, 150, 255);
+  // background(0, 150, 255);
+  background(255);
+
+  //draw water
+  fill(0, 150, 255); //water color
+  rect(0, 600 - fillHeight, 600, 600); //water rectangle
+
+  //fill with water
+  if (isEmpty && addPressed && fillHeight <= 600) {
+    fillHeight += 1;
+  }
+  if (fillHeight >= 600) {
+    isFull = true;
+    isEmpty = false;
+    addPressed = false;
+  }
+
+  //drain the water
+  if (isFull && drainPressed && fillHeight >= 0) {
+    fillHeight -= 1;
+  }
+  if (fillHeight <= 0) {
+    isFull = false;
+    isEmpty = true;
+    drainPressed = false;
+  }
+
   
   // Draw bubbles
   for (let bubble of bubbles) {
@@ -62,7 +116,7 @@ function draw() {
     bubble.ascend();
     bubble.update();
   }  
-  sqr = rect(0, 200, sqrWidth, sqrHeight);
+  // sqr = rect(0, 0, sqrWidth, sqrHeight);
 
   collisionDetection(); // check for collision with water
  
@@ -88,7 +142,8 @@ function draw() {
 
 function collisionDetection(){ // check for collision with "water"
   var collide = (y > sqrHeight - radius/2);
-  if (collide && !sound.isPlaying()) { // if colliding with water : inWater = true
+  // if (collide && !sound.isPlaying()) { // if colliding with water : inWater = true
+  if (collide) { 
     console.log("Collision");
     inWater = true;
     //sound.play();
