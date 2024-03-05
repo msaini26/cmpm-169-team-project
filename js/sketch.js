@@ -48,9 +48,9 @@ function setup() {
   x = width / 2;
   y = height / 2;
 
-  gravity = 0.7;
-  fallMult = 1.1;
-  bouyantMult = 0.99;
+  gravity = 0.3;
+  fallMult = 0.1;
+  bouyantMult = -0.1;
   currMult = fallMult;
   inWater = -1;
 
@@ -153,7 +153,7 @@ function draw() {
 
 
   //fill with water
-  if (isEmpty && addPressed && fillHeight <= 500) {
+  if (isEmpty && addPressed && fillHeight <= 600) {
     fillHeight += 1;
   }
   if (fillHeight >= 600) {
@@ -193,7 +193,7 @@ function draw() {
   }
 
   // GRAVITY
-  yspeed += gravity * (currMult - 1) * deltaTime;
+  yspeed += gravity * currMult * deltaTime;
   y += yspeed;
 
   // BOUNCING
