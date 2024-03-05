@@ -8,6 +8,7 @@ let x;
 let y;
 let yspeed;
 
+let gravity;
 let fallMult;
 let bouyantMult;
 let currMult;
@@ -42,8 +43,9 @@ function setup() {
   x = width/2
   y = height/2
  
-  fallMult = 1.01;
-  bouyantMult = 0.99;
+  gravity = 0.025;
+  fallMult = 1.5;
+  bouyantMult = 0.01;
   currMult = fallMult;
   inWater = -1;
  
@@ -108,6 +110,7 @@ function draw() {
   if (isFull && drainPressed && fillHeight >= 0) {
     fillHeight -= 1;
   }
+  
   if (fillHeight <= 0) {
     isFull = false;
     isEmpty = true;
@@ -125,14 +128,15 @@ function draw() {
 
   collisionDetection(); // check for collision with water
  
+  fill(51);
   ellipse(x, y, 50, 50);    // draw the circle
  
   // BOUYANCY -- floats up if in water, falls down if not
-  if (inWater == -1) {currMult = fallMult;}
-  else if (inWater == 1) {currMult = bouyantMult;}
+  if (inWater == false) {currMult = fallMult;}
+  else if (inWater == true) {currMult = bouyantMult;}
  
   // GRAVITY
-  yspeed += (currMult - 1) * deltaTime;
+  yspeed += gravity * (currMult - 1) * deltaTime;
   y+=yspeed;
  
   // BOUNCING
@@ -146,13 +150,18 @@ function draw() {
 }
 
 function collisionDetection(){ // check for collision with "water"
-  var collide = (y > sqrHeight - radius/2);
-  if (collide && !sound.isPlaying()) { // if colliding with water : inWater = true
-  //if (collide) { 
-    console.log("Collision");
-    inWater = true;
-    sound.play();
+  var collide = (-fillHeight + 600 < y);
+  console.log(collide);
+  if (collide) { 
+    if (!inWater) {
+      inWater = true;
+
+      if (yspeed > 3) {
+        sound.play();
+      }
+    }
   } else {
+    if (inWater) {console.log(yspeed);}
     inWater = false;
   }
 }
@@ -187,13 +196,15 @@ class Bubble {
     ellipse(this.x, this.y, this.diameter, this.diameter);
   }
 }
-// function keyPressed() {
+function keyPressed() {
  
-//   if (key == ' ') {
+   if (key == ' ') {
    
-//     inWater *= -1;
+     yspeed = 10 ;
    
-//   }
+   }
+
+}
  
 //   // if colliding with water : inWater = true
 //   // else if NOT colliding with water : inWater = false
