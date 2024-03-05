@@ -29,60 +29,59 @@ var fillHeight = 0;
 let sound;
 let bubbles = [];
 
-function preload(){
-  sound = loadSound('../assets/water_plop.wav');
+function preload() {
+  sound = loadSound("../assets/water_plop.wav");
 }
 
 function setup() {
   canvasContainer = $("#canvas-container");
   let canvas = createCanvas(600, 600);
   canvas.parent("canvas-container");
- 
+
   // createCanvas(600, 600);
-  x = width/2
-  y = height/2
- 
+  x = width / 2;
+  y = height / 2;
+
   fallMult = 1.01;
   bouyantMult = 0.99;
   currMult = fallMult;
   inWater = -1;
- 
+
   yspeed = 0;
- 
+
   radius = 50;
   sqrWidth = 400;
   sqrHeight = 200;
-  
+
   // Create bubbles
   for (let i = 0; i < 25; i++) {
     bubbles.push(new Bubble());
   }
 
   //add water button
-  let addButton = createButton('add water');
+  let addButton = createButton("add water");
   addButton.position(835, 135);
 
   addButton.mousePressed(() => {
-    if(isEmpty) {
+    if (isEmpty) {
       addPressed = true;
     }
   });
 
   //drain water button
-  let drainButton = createButton('drain water');
+  let drainButton = createButton("drain water");
   drainButton.position(835, 165);
 
   drainButton.mousePressed(() => {
-    if(isFull) {
+    if (isFull) {
       drainPressed = true;
     }
   });
- 
 }
 
 function draw() {
   // Start the audio context on a click/touch event to prevent it from being blocked by browsers
-  if (getAudioContext().state !== 'running') {
+  if (getAudioContext().state !== "running") {
     getAudioContext().resume();
   }
 
@@ -90,12 +89,32 @@ function draw() {
   // background(0, 150, 255);
   background(255);
 
+  
+  // draw water #2
+  fill(0, 100, 200); //water color
+  beginShape();
+  for (let x = 0; x <= width; x += 20) {
+    let y = 600 - fillHeight + sin(x * 0.02 + frameCount * 0.01) * 50;
+    vertex(x, y);
+  }
+  vertex(width, height);
+  vertex(0, height);
+  endShape(CLOSE);
+
   //draw water
   fill(0, 150, 255); //water color
-  rect(0, 600 - fillHeight, 600, 600); //water rectangle
+  beginShape();
+  for (let x = 0; x <= width; x += 10) {
+    let y = 600 - fillHeight + sin(x * 0.02 + frameCount * 0.05) * 50;
+    vertex(x, y);
+  }
+  vertex(width, height);
+  vertex(0, height);
+  endShape(CLOSE);
+
 
   //fill with water
-  if (isEmpty && addPressed && fillHeight <= 600) {
+  if (isEmpty && addPressed && fillHeight <= 500) {
     fillHeight += 1;
   }
   if (fillHeight >= 600) {
@@ -114,41 +133,42 @@ function draw() {
     drainPressed = false;
   }
 
-  
   // Draw bubbles
   for (let bubble of bubbles) {
     bubble.display();
     bubble.ascend();
     bubble.update();
-  }  
+  }
   // sqr = rect(0, 0, sqrWidth, sqrHeight);
 
   collisionDetection(); // check for collision with water
- 
-  ellipse(x, y, 50, 50);    // draw the circle
- 
+
+  ellipse(x, y, 50, 50); // draw the circle
+
   // BOUYANCY -- floats up if in water, falls down if not
-  if (inWater == -1) {currMult = fallMult;}
-  else if (inWater == 1) {currMult = bouyantMult;}
- 
+  if (inWater == -1) {
+    currMult = fallMult;
+  } else if (inWater == 1) {
+    currMult = bouyantMult;
+  }
+
   // GRAVITY
   yspeed += (currMult - 1) * deltaTime;
-  y+=yspeed;
- 
+  y += yspeed;
+
   // BOUNCING
   if (y > height) {
-   
-      y = height;
-      yspeed *= -0.7;
-   
+    y = height;
+    yspeed *= -0.7;
   }
- 
 }
 
-function collisionDetection(){ // check for collision with "water"
-  var collide = (y > sqrHeight - radius/2);
-  if (collide && !sound.isPlaying()) { // if colliding with water : inWater = true
-  //if (collide) { 
+function collisionDetection() {
+  // check for collision with "water"
+  var collide = y > sqrHeight - radius / 2;
+  if (collide && !sound.isPlaying()) {
+    // if colliding with water : inWater = true
+    //if (collide) {
     console.log("Collision");
     inWater = true;
     sound.play();
@@ -188,13 +208,13 @@ class Bubble {
   }
 }
 // function keyPressed() {
- 
+
 //   if (key == ' ') {
-   
+
 //     inWater *= -1;
-   
+
 //   }
- 
+
 //   // if colliding with water : inWater = true
 //   // else if NOT colliding with water : inWater = false
 //   if((y + radius / 2) > sqrHeight){
