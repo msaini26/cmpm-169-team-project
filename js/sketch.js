@@ -40,9 +40,9 @@ function setup() {
   canvas.parent("canvas-container");
  
   // createCanvas(600, 600);
-  x = width/2
-  y = height/2
- 
+  x = width / 2;
+  y = height / 2;
+
   gravity = 0.025;
   fallMult = 1.5;
   bouyantMult = 0.01;
@@ -127,27 +127,46 @@ function draw() {
   // sqr = rect(0, 0, sqrWidth, sqrHeight);
 
   collisionDetection(); // check for collision with water
- 
+
   fill(51);
-  ellipse(x, y, 50, 50);    // draw the circle
- 
+  ellipse(x, y, 50, 50); // draw the circle
+
   // BOUYANCY -- floats up if in water, falls down if not
-  if (inWater == false) {currMult = fallMult;}
-  else if (inWater == true) {currMult = bouyantMult;}
- 
+  if (inWater == false) {
+    currMult = fallMult;
+  } else if (inWater == true) {
+    currMult = bouyantMult;
+  }
+
   // GRAVITY
   yspeed += gravity * (currMult - 1) * deltaTime;
-  y+=yspeed;
- 
+  y += yspeed;
+
   // BOUNCING
   if (y > height) {
-   
-      y = height;
-      yspeed *= -0.7;
-   
+    y = height;
+    yspeed *= -0.7;
   }
- 
 }
+
+function toggleCamera() {
+  if (!camActive) {
+    // Activate the camera
+    video = createCapture(VIDEO);
+    video.size(300, 300);
+    video.hide();
+    camActive = true;
+  } else {
+    // Deactivate the camera
+    video.stop();
+    camActive = false;
+    // Reset the little guy's position to the center
+    guyPosition = createVector(width / 2, height / 2);
+  }
+}
+
+
+
 
 function collisionDetection(){ // check for collision with "water"
   var collide = (-fillHeight + 600 < y);
