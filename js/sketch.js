@@ -36,7 +36,7 @@ let sound;
 let bubbles = [];
 
 function preload() {
-  sound = loadSound("../assets/water_plop.wav");
+  sound = loadSound("../assets/plop.wav");
 }
 
 function setup() {
@@ -156,7 +156,7 @@ function draw() {
   if (isEmpty && addPressed && fillHeight <= 600) {
     fillHeight += 1;
   }
-  if (fillHeight >= 600) {
+  if (fillHeight >= 500) {
     isFull = true;
     isEmpty = false;
     addPressed = false;
