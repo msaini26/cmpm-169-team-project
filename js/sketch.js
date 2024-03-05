@@ -4,6 +4,11 @@
 //    - collision function instead of keypress
 //    -Collision code between circle and rectangle
 
+
+let video;
+let guyPosition;
+let camActive = false;
+
 let x;
 let y;
 let yspeed;
@@ -53,6 +58,15 @@ function setup() {
   sqrWidth = 400;
   sqrHeight = 200;
 
+
+
+  let toggleCamera = createButton("Toggle Camera");
+  toggleCamera.position(835, 195);
+  toggleCamera.mousePressed(toggleCamera);
+
+  guyPosition = createVector(width / 2, height / 2);
+
+
   // Create bubbles
   for (let i = 0; i < 25; i++) {
     bubbles.push(new Bubble());
@@ -80,6 +94,29 @@ function setup() {
 }
 
 function draw() {
+
+  if (camActive) {
+    // Display the webcam feed
+    image(video, 0, 0, width, height);
+
+    // Shake the little guy in place
+    let shakeX = random(-40, 40);
+    let shakeY = random(-30, 30);
+    guyPosition.add(createVector(shakeX, shakeY));
+
+    // Move the little guy smoothly
+    guyPosition.add(p5.Vector.random2D().mult(2));
+
+    // Keep the little guy within the canvas bounds
+    guyPosition.x = constrain(guyPosition.x, 0, width);
+    guyPosition.y = constrain(guyPosition.y, 0, height);
+  }
+
+  // Draw the little guy
+  fill(255, 0, 0);
+  rectMode(CENTER);
+  rect(guyPosition.x, guyPosition.y, 50, 50);
+
   // Start the audio context on a click/touch event to prevent it from being blocked by browsers
   if (getAudioContext().state !== "running") {
     getAudioContext().resume();
@@ -162,6 +199,25 @@ function draw() {
     yspeed *= -0.7;
   }
 }
+
+function toggleCamera() {
+  if (!camActive) {
+    // Activate the camera
+    video = createCapture(VIDEO);
+    video.size(300, 300);
+    video.hide();
+    camActive = true;
+  } else {
+    // Deactivate the camera
+    video.stop();
+    camActive = false;
+    // Reset the little guy's position to the center
+    guyPosition = createVector(width / 2, height / 2);
+  }
+}
+
+
+
 
 function collisionDetection() {
   // check for collision with "water"
