@@ -4,6 +4,11 @@
 //    - collision function instead of keypress
 //    -Collision code between circle and rectangle
 
+
+let video;
+let guyPosition;
+let camActive = false;
+
 let x;
 let y;
 let yspeed;
@@ -30,61 +35,92 @@ var fillHeight = 0;
 let sound;
 let bubbles = [];
 
-function preload(){
-  sound = loadSound('../assets/water_plop.wav');
+function preload() {
+  sound = loadSound("../assets/water_plop.wav");
 }
 
 function setup() {
   canvasContainer = $("#canvas-container");
   let canvas = createCanvas(600, 600);
   canvas.parent("canvas-container");
- 
+
   // createCanvas(600, 600);
   x = width / 2;
   y = height / 2;
 
-  gravity = 0.025;
-  fallMult = 1.5;
-  bouyantMult = 0.01;
+  gravity = 0.7;
+  fallMult = 1.1;
+  bouyantMult = 0.99;
   currMult = fallMult;
   inWater = -1;
- 
+
   yspeed = 0;
- 
+
   radius = 50;
   sqrWidth = 400;
   sqrHeight = 200;
-  
+
+
+
+  let toggleCamera = createButton("Toggle Camera");
+  toggleCamera.position(835, 195);
+  toggleCamera.mousePressed(toggleCamera);
+
+  guyPosition = createVector(width / 2, height / 2);
+
+
   // Create bubbles
   for (let i = 0; i < 25; i++) {
     bubbles.push(new Bubble());
   }
 
   //add water button
-  let addButton = createButton('add water');
+  let addButton = createButton("add water");
   addButton.position(835, 135);
 
   addButton.mousePressed(() => {
-    if(isEmpty) {
+    if (isEmpty) {
       addPressed = true;
     }
   });
 
   //drain water button
-  let drainButton = createButton('drain water');
+  let drainButton = createButton("drain water");
   drainButton.position(835, 165);
 
   drainButton.mousePressed(() => {
-    if(isFull) {
+    if (isFull) {
       drainPressed = true;
     }
   });
- 
 }
 
 function draw() {
+
+  if (camActive) {
+    // Display the webcam feed
+    image(video, 0, 0, width, height);
+
+    // Shake the little guy in place
+    let shakeX = random(-40, 40);
+    let shakeY = random(-30, 30);
+    guyPosition.add(createVector(shakeX, shakeY));
+
+    // Move the little guy smoothly
+    guyPosition.add(p5.Vector.random2D().mult(2));
+
+    // Keep the little guy within the canvas bounds
+    guyPosition.x = constrain(guyPosition.x, 0, width);
+    guyPosition.y = constrain(guyPosition.y, 0, height);
+  }
+
+  // Draw the little guy
+  fill(255, 0, 0);
+  rectMode(CENTER);
+  rect(guyPosition.x, guyPosition.y, 50, 50);
+
   // Start the audio context on a click/touch event to prevent it from being blocked by browsers
-  if (getAudioContext().state !== 'running') {
+  if (getAudioContext().state !== "running") {
     getAudioContext().resume();
   }
 
@@ -92,12 +128,32 @@ function draw() {
   // background(0, 150, 255);
   background(255);
 
+  
+  // draw water #2
+  fill(0, 100, 200); //water color
+  beginShape();
+  for (let x = 0; x <= width; x += 20) {
+    let y = 600 - fillHeight + sin(x * 0.02 + frameCount * 0.01) * 50;
+    vertex(x, y);
+  }
+  vertex(width, height);
+  vertex(0, height);
+  endShape(CLOSE);
+
   //draw water
   fill(0, 150, 255); //water color
-  rect(0, 600 - fillHeight, 600, 600); //water rectangle
+  beginShape();
+  for (let x = 0; x <= width; x += 10) {
+    let y = 600 - fillHeight + sin(x * 0.02 + frameCount * 0.05) * 50;
+    vertex(x, y);
+  }
+  vertex(width, height);
+  vertex(0, height);
+  endShape(CLOSE);
+
 
   //fill with water
-  if (isEmpty && addPressed && fillHeight <= 600) {
+  if (isEmpty && addPressed && fillHeight <= 500) {
     fillHeight += 1;
   }
   if (fillHeight >= 600) {
@@ -110,25 +166,23 @@ function draw() {
   if (isFull && drainPressed && fillHeight >= 0) {
     fillHeight -= 1;
   }
-  
   if (fillHeight <= 0) {
     isFull = false;
     isEmpty = true;
     drainPressed = false;
   }
 
-  
   // Draw bubbles
   for (let bubble of bubbles) {
     bubble.display();
     bubble.ascend();
     bubble.update();
-  }  
+  }
   // sqr = rect(0, 0, sqrWidth, sqrHeight);
 
   collisionDetection(); // check for collision with water
 
-  fill(51);
+  fill(51)
   ellipse(x, y, 50, 50); // draw the circle
 
   // BOUYANCY -- floats up if in water, falls down if not
@@ -168,19 +222,17 @@ function toggleCamera() {
 
 
 
-function collisionDetection(){ // check for collision with "water"
-  var collide = (-fillHeight + 600 < y);
-  console.log(collide);
-  if (collide) { 
-    if (!inWater) {
-      inWater = true;
+function collisionDetection() {
+  // check for collision with "water"
+  var collide = -fillHeight + 600 < y;
+  if (collide) {
+    // if colliding with water : inWater = true
+    //if (collide) {
+    console.log("Collision");
+    if(!sound.isPlaying() && !inWater && yspeed > 3) {sound.play()};
 
-      if (yspeed > 3) {
-        sound.play();
-      }
-    }
+    inWater = true;
   } else {
-    if (inWater) {console.log(yspeed);}
     inWater = false;
   }
 }
@@ -216,15 +268,15 @@ class Bubble {
   }
 }
 function keyPressed() {
- 
+
    if (key == ' ') {
-   
-     yspeed = 10 ;
-   
+
+     yspeed = 3;
+
    }
 
-}
- 
+  }
+
 //   // if colliding with water : inWater = true
 //   // else if NOT colliding with water : inWater = false
 //   if((y + radius / 2) > sqrHeight){
