@@ -39,10 +39,14 @@ let floaties = [];
 
 let particles = [];
 
+let duck;
+
 function preload() {
 
   sound = loadSound("../assets/plop.wav");
   font = loadFont('../js/Mogent.otf');
+  duck = loadImage('../assets/duck.png');
+
 
 }
 
@@ -223,6 +227,8 @@ function draw() {
     }
 
   }
+  image(duck, 0, 0, 450, 250);
+
 
 }
 
@@ -270,7 +276,6 @@ class floaty {
     //ellipse(this.x, this.y, 50, 50); // draw the circle
     textSize(50);
     text(this.letter, this.x, this.y);
-
   }
 
   CollisionDetection() {
