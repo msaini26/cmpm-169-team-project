@@ -35,6 +35,8 @@ var fillHeight = 0;
 let sound;
 let bubbles = [];
 
+let floaties = [];
+
 function preload() {
   sound = loadSound("../assets/plop.wav");
 }
@@ -93,6 +95,9 @@ function setup() {
       drainPressed = true;
     }
   });
+
+  floaties = [new floaty(fallMult, bouyantMult, 0.7, width/2, height/2)];
+
 }
 
 function draw() {
@@ -180,27 +185,12 @@ function draw() {
   }
   // sqr = rect(0, 0, sqrWidth, sqrHeight);
 
-  collisionDetection(); // check for collision with water
+  for (i = 0; i < floaties.length; i++) {
 
-  fill(51)
-  ellipse(x, y, 50, 50); // draw the circle
+    floaties[i].Update();
 
-  // BOUYANCY -- floats up if in water, falls down if not
-  if (inWater == false) {
-    currMult = fallMult;
-  } else if (inWater == true) {
-    currMult = bouyantMult;
   }
 
-  // GRAVITY
-  yspeed += gravity * currMult * deltaTime;
-  y += yspeed;
-
-  // BOUNCING
-  if (y > height) {
-    y = height;
-    yspeed *= -0.7;
-  }
 }
 
 function toggleCamera() {
@@ -219,23 +209,72 @@ function toggleCamera() {
   }
 }
 
+// ===== CLASSES =====
+class floaty {
 
+  constructor(fall, bouyancy, bounciness, x, y) {
 
+    this.fallMult = fall;
+    this.bouyantMult = bouyancy;
+    this.bounciness = bounciness;
+    this.currMult = this.fall;
+    this.yspeed = 0;
+    this.inWater = false;
+    this.x = x;
+    this.y = y;
 
-function collisionDetection() {
-  // check for collision with "water"
-  var collide = -fillHeight + 600 < y;
-  if (collide) {
-    // if colliding with water : inWater = true
-    //if (collide) {
-    console.log("Collision");
-    if(!sound.isPlaying() && !inWater && yspeed > 3) {sound.play()};
-
-    inWater = true;
-  } else {
-    inWater = false;
   }
+
+  DrawMe() {
+
+    fill(51)
+    ellipse(this.x, this.y, 50, 50); // draw the circle
+
+  }
+
+  CollisionDetection() {
+
+    var collide = -fillHeight + 600 < this.y;
+    if (collide) {
+      
+      if(!sound.isPlaying() && !this.inWater && this.yspeed > 3) {sound.play()};
+      this.inWater = true;
+
+    } else {
+
+      this.inWater = false;
+
+    }
+
+  }
+
+  Update() {
+
+    this.CollisionDetection(); // check for collision with water
+
+    // BOUYANCY -- floats up if in water, falls down if not
+    if (this.inWater == false) {
+      this.currMult = this.fallMult;
+    } else if (this.inWater == true) {
+      this.currMult = this.bouyantMult;
+    }
+
+    // GRAVITY
+    this.yspeed += gravity * this.currMult * deltaTime;
+    this.y += this.yspeed;
+
+    // BOUNCING
+    if (this.y > height) {
+      this.y = height;
+      this.yspeed *= -this.bounciness;
+    }
+
+    this.DrawMe();
+
+  }
+
 }
+
 
 // Bubble class
 class Bubble {
