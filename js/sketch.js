@@ -38,7 +38,10 @@ let bubbles = [];
 let floaties = [];
 
 function preload() {
+
   sound = loadSound("../assets/plop.wav");
+  font = loadFont('../js/Mogent.otf');
+
 }
 
 function setup() {
@@ -96,9 +99,7 @@ function setup() {
     }
   });
 
-  floaties = [new floaty(fallMult, bouyantMult, 0.7, width/2, height/2), 
-              new floaty(fallMult, 0.01, 0.7, width/2 + 50, height/2 + 50),
-              new floaty(0.01, -0.05, 0, width/2 - 50, height/2 + 50)];
+  floaties = [];
 
 }
 
@@ -161,7 +162,7 @@ function draw() {
 
   //fill with water
   if (isEmpty && addPressed && fillHeight <= 600) {
-    fillHeight += 1;
+    fillHeight += 5;
   }
   if (fillHeight >= 500) {
     isFull = true;
@@ -171,7 +172,7 @@ function draw() {
 
   //drain the water
   if (isFull && drainPressed && fillHeight >= 0) {
-    fillHeight -= 1;
+    fillHeight -= 5;
   }
   if (fillHeight <= 0) {
     isFull = false;
@@ -190,6 +191,12 @@ function draw() {
   for (i = 0; i < floaties.length; i++) {
 
     floaties[i].Update();
+
+    if (floaties[i].y > height + 10) {
+
+      floaties.splice(i, 1)
+
+    }
 
   }
 
@@ -211,11 +218,21 @@ function toggleCamera() {
   }
 }
 
+function keyPressed() {
+
+  console.log(keyCode);
+
+  let newLetter = new floaty(0.05, -0.05, 0.4, mouseX, -25, key);
+  floaties.push(newLetter);
+
+}
+
 // ===== CLASSES =====
 class floaty {
 
-  constructor(fall, bouyancy, bounciness, x, y) {
+  constructor(fall, bouyancy, bounciness, x, y, letter) {
 
+    this.letter = letter;
     this.fallMult = fall;
     this.bouyantMult = bouyancy;
     this.bounciness = bounciness;
@@ -230,7 +247,9 @@ class floaty {
   DrawMe() {
 
     fill(51)
-    ellipse(this.x, this.y, 50, 50); // draw the circle
+    //ellipse(this.x, this.y, 50, 50); // draw the circle
+    textSize(50);
+    text(this.letter, this.x, this.y);
 
   }
 
@@ -238,6 +257,8 @@ class floaty {
 
     var collide = -fillHeight + 600 < this.y;
     if (collide) {
+
+      if (!this.inWater) { console.log("COLLIDED"); }
       
       if(!sound.isPlaying() && !this.inWater && this.yspeed > 3) {sound.play()};
       this.inWater = true;
@@ -265,11 +286,11 @@ class floaty {
     this.yspeed += gravity * this.currMult * deltaTime;
     this.y += this.yspeed;
 
-    // BOUNCING
+    /*// BOUNCING
     if (this.y > height) {
       this.y = height;
       this.yspeed *= -this.bounciness;
-    }
+    }*/
 
     this.DrawMe();
 
@@ -308,26 +329,3 @@ class Bubble {
     ellipse(this.x, this.y, this.diameter, this.diameter);
   }
 }
-function keyPressed() {
-
-  if (key == ' ') {
-
-    for (i = 0; i < floaties.length; i++) {
-
-      floaties[i].yspeed -= 10;
-  
-    }
-
-  }
-
-  }
-
-//   // if colliding with water : inWater = true
-//   // else if NOT colliding with water : inWater = false
-//   if((y + radius / 2) > sqrHeight){
-//     console.log("Collision")
-//     inWater = true;
-//   }else{
-//     inWater = false;
-//   }
-// }
