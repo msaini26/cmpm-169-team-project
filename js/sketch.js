@@ -65,11 +65,15 @@ function setup() {
   sqrWidth = 400;
   sqrHeight = 200;
 
+  // Set up camera
+  video = createCapture(VIDEO);
+  video.size(300, 300);
+  video.hide();
 
-
-  let toggleCamera = createButton("Toggle Camera");
-  toggleCamera.position(835, 195);
-  toggleCamera.mousePressed(toggleCamera);
+  // Toggle camera button
+  let cameraButton = createButton("Toggle Camera");
+  cameraButton.position(835, 195);
+  cameraButton.mousePressed(toggleCamera);
 
   guyPosition = createVector(width / 2, height / 2);
 
@@ -138,6 +142,10 @@ function draw() {
 
   
   // draw water #2
+  // Camera background when toggled
+  if (camActive) {
+    image(video, 0, 0, height, width);
+  }
   fill(0, 100, 200); //water color
   beginShape();
   for (let x = 0; x <= width; x += 20) {
@@ -205,13 +213,9 @@ function draw() {
 function toggleCamera() {
   if (!camActive) {
     // Activate the camera
-    video = createCapture(VIDEO);
-    video.size(300, 300);
-    video.hide();
     camActive = true;
   } else {
     // Deactivate the camera
-    video.stop();
     camActive = false;
     // Reset the little guy's position to the center
     guyPosition = createVector(width / 2, height / 2);
