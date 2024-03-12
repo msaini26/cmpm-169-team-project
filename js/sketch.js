@@ -96,7 +96,9 @@ function setup() {
     }
   });
 
-  floaties = [new floaty(fallMult, bouyantMult, 0.7, width/2, height/2)];
+  floaties = [new floaty(fallMult, bouyantMult, 0.7, width/2, height/2), 
+              new floaty(fallMult, 0.01, 0.7, width/2 + 50, height/2 + 50),
+              new floaty(0.01, -0.05, 0, width/2 - 50, height/2 + 50)];
 
 }
 
@@ -308,11 +310,15 @@ class Bubble {
 }
 function keyPressed() {
 
-   if (key == ' ') {
+  if (key == ' ') {
 
-     yspeed = 3;
+    for (i = 0; i < floaties.length; i++) {
 
-   }
+      floaties[i].yspeed -= 10;
+  
+    }
+
+  }
 
   }
 
