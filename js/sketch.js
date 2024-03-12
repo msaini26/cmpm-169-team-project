@@ -37,6 +37,8 @@ let bubbles = [];
 
 let floaties = [];
 
+let particles = [];
+
 function preload() {
 
   sound = loadSound("../assets/plop.wav");
@@ -200,6 +202,20 @@ function draw() {
 
     floaties[i].Update();
 
+    // Particles
+    let p = new Particle();
+    particles.push(p);
+    
+    for(let j = particles.length-1; j >= 0; j--){
+      if(!particles[j].edges()){ 
+        particles[j].updatePos();
+        particles[j].show();
+      }
+      else{
+        particles.splice(j,1);
+      }
+    }
+
     if (floaties[i].y > height + 10) {
 
       floaties.splice(i, 1)
@@ -331,5 +347,33 @@ class Bubble {
     noStroke();
     fill(255); // White bubbles
     ellipse(this.x, this.y, this.diameter, this.diameter);
+  }
+}
+
+// Particle Class
+class Particle{
+  constructor(){
+    this.pos = p5.Vector.random2D().mult(30); // position
+    this.vel = createVector(0,0); //velocity
+    this.acc = this.pos.copy().mult(random(0.01, 0.001)); //acceleration
+    this.w = random(3, 5); //width
+    this.color = [random(128,128), random(238,144), random(230,255)] // randomly generated color
+  }
+  updatePos(){ // updates the velocity and position of particles
+    this.vel.add(this.acc);
+    this.pos.add(this.vel);
+  }
+  edges(){ // if they reach outside the canvas, indicate when to remove the particles
+    if(this.pos.x < -width/2 || this.pos.x > width/2 || this.pos.y < -height/2 || this.pos.y > height/2){
+      return true;
+    }
+    else{
+      return false;
+    }
+  }
+  show(){ // appearance of the particles
+    noStroke();
+    fill(this.color);
+    ellipse(this.pos.x, this.pos.y, this.w)
   }
 }
