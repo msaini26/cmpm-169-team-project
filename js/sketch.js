@@ -382,3 +382,73 @@ class Particle{
     ellipse(this.pos.x, this.pos.y, this.w)
   }
 }
+
+class ducky {
+
+  constructor(fall, bouyancy, bounciness, x, y, letter) {
+
+    this.letter = letter;
+    this.fallMult = fall;
+    this.bouyantMult = bouyancy;
+    this.bounciness = bounciness;
+    this.currMult = this.fall;
+    this.yspeed = 0;
+    this.inWater = false;
+    this.x = x;
+    this.y = y;
+
+  }
+
+  DrawDuck() {
+
+    fill(51)
+    //ellipse(this.x, this.y, 50, 50); // draw the circle
+    // textSize(50);
+    image(duck, 0, 0, 450, 250);
+    // text(this.letter, this.x, this.y);
+  }
+
+  CollisionDetection() {
+
+    var collide = -fillHeight + 600 < this.y;
+    if (collide) {
+
+      if (!this.inWater) { console.log("COLLIDED"); }
+      
+      if(!sound.isPlaying() && !this.inWater && this.yspeed > 3) {sound.play()};
+      this.inWater = true;
+
+    } else {
+
+      this.inWater = false;
+
+    }
+
+  }
+
+  Update() {
+
+    this.CollisionDetection(); // check for collision with water
+
+    // BOUYANCY -- floats up if in water, falls down if not
+    if (this.inWater == false) {
+      this.currMult = this.fallMult;
+    } else if (this.inWater == true) {
+      this.currMult = this.bouyantMult;
+    }
+
+    // GRAVITY
+    this.yspeed += gravity * this.currMult * deltaTime;
+    this.y += this.yspeed;
+
+    /*// BOUNCING
+    if (this.y > height) {
+      this.y = height;
+      this.yspeed *= -this.bounciness;
+    }*/
+
+    this.DrawDuck();
+
+  }
+
+}
