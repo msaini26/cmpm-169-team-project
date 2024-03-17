@@ -37,6 +37,8 @@ let bubbles = [];
 
 let floaties = [];
 
+let henry;
+
 let particles = [];
 
 let duck;
@@ -110,6 +112,8 @@ function setup() {
   });
 
   floaties = [];
+
+  henry = new ducky(0.02, -0.01, 0.4, 300, 400);
 
 }
 
@@ -200,7 +204,8 @@ function draw() {
     bubble.ascend();
     bubble.update();
   }
-  // sqr = rect(0, 0, sqrWidth, sqrHeight);
+  
+  henry.Update();
 
   for (i = 0; i < floaties.length; i++) {
 
@@ -227,7 +232,6 @@ function draw() {
     }
 
   }
-  image(duck, 0, 0, 450, 250);
 
 
 }
@@ -248,8 +252,23 @@ function keyPressed() {
 
   console.log(keyCode);
 
-  let newLetter = new floaty(0.05, -0.05, 0.4, mouseX, -25, key);
-  floaties.push(newLetter);
+  if (key == key.toUpperCase()) {
+
+    var bouyancy = Math.floor(Math.random() * (2 - 1 + 1)) + 1;
+    bouyancy *= 0.01;
+
+  } else {
+
+    var bouyancy = -0.05;
+
+  }
+
+  if (key != "Shift") {
+
+    let newLetter = new floaty(0.05, bouyancy, 0.4, mouseX, -25, key);
+    floaties.push(newLetter);
+
+  }
 
 }
 
@@ -283,7 +302,7 @@ class floaty {
     var collide = -fillHeight + 600 < this.y;
     if (collide) {
 
-      if (!this.inWater) { console.log("COLLIDED"); }
+      if (!this.inWater && this.bouyantMult > 0) { this.yspeed *= 0.75; }
       
       if(!sound.isPlaying() && !this.inWater && this.yspeed > 3) {sound.play()};
       this.inWater = true;
@@ -310,12 +329,12 @@ class floaty {
     // GRAVITY
     this.yspeed += gravity * this.currMult * deltaTime;
     this.y += this.yspeed;
+    
+    if (this.bouyantMult > 0 && this.inWater) {
 
-    /*// BOUNCING
-    if (this.y > height) {
-      this.y = height;
-      this.yspeed *= -this.bounciness;
-    }*/
+      this.yspeed *= 0.9;
+
+    }
 
     this.DrawMe();
 
@@ -385,9 +404,8 @@ class Particle{
 
 class ducky {
 
-  constructor(fall, bouyancy, bounciness, x, y, letter) {
+  constructor(fall, bouyancy, bounciness, x, y) {
 
-    this.letter = letter;
     this.fallMult = fall;
     this.bouyantMult = bouyancy;
     this.bounciness = bounciness;
@@ -402,10 +420,7 @@ class ducky {
   DrawDuck() {
 
     fill(51)
-    //ellipse(this.x, this.y, 50, 50); // draw the circle
-    // textSize(50);
-    image(duck, 0, 0, 450, 250);
-    // text(this.letter, this.x, this.y);
+    image(duck, this.x, this.y, 450, 250);
   }
 
   CollisionDetection() {
@@ -413,7 +428,7 @@ class ducky {
     var collide = -fillHeight + 600 < this.y;
     if (collide) {
 
-      if (!this.inWater) { console.log("COLLIDED"); }
+      if (!this.inWater) { this.yspeed *= 0.65; }
       
       if(!sound.isPlaying() && !this.inWater && this.yspeed > 3) {sound.play()};
       this.inWater = true;
@@ -441,11 +456,9 @@ class ducky {
     this.yspeed += gravity * this.currMult * deltaTime;
     this.y += this.yspeed;
 
-    /*// BOUNCING
-    if (this.y > height) {
-      this.y = height;
-      this.yspeed *= -this.bounciness;
-    }*/
+    //this.yspeed *= 0.9;
+
+    //this.y = -fillHeight + 600 - 100;
 
     this.DrawDuck();
 
