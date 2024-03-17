@@ -115,12 +115,12 @@ function setup() {
 
   floaties = [];
 
-  henry = new ducky(0.02, -0.01, 0.4, 300, 400);
-
   // Create fish
   for (let i = 0; i < 5; i++) {
     fish.push(new Fish());
   }
+
+  henry = new ducky(0.02, -0.01, 0.4, 300, 400);
 
 }
 
@@ -211,8 +211,6 @@ function draw() {
     bubble.ascend();
     bubble.update();
   }
-  
-  henry.Update();
 
   for (i = 0; i < floaties.length; i++) {
 
@@ -244,6 +242,9 @@ function draw() {
     f.display();
     f.swim();
   }
+
+  henry.Update();
+
 }
 
 function toggleCamera() {
@@ -273,7 +274,7 @@ function keyPressed() {
 
   }
 
-  if (key != "Shift") {
+  if (key.length <= 1) {
 
     let newLetter = new floaty(0.05, bouyancy, 0.4, mouseX, -25, key);
     floaties.push(newLetter);
