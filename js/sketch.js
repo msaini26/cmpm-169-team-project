@@ -41,6 +41,8 @@ let henry;
 
 let particles = [];
 
+let fish = [];
+
 let duck;
 
 function preload() {
@@ -114,6 +116,11 @@ function setup() {
   floaties = [];
 
   henry = new ducky(0.02, -0.01, 0.4, 300, 400);
+
+  // Create fish
+  for (let i = 0; i < 5; i++) {
+    fish.push(new Fish());
+  }
 
 }
 
@@ -232,8 +239,11 @@ function draw() {
     }
 
   }
-
-
+  // Draw fish
+  for (let f of fish) {
+    f.display();
+    f.swim();
+  }
 }
 
 function toggleCamera() {
@@ -464,4 +474,36 @@ class ducky {
 
   }
 
+}
+
+// Fish class
+class Fish {
+  constructor() {
+    this.x = random(width);
+    this.y = random(height);
+    this.size = random(10, 30);
+    this.speed = random(1, 3);
+    this.direction = 1; // -1 for left, 1 for right
+  }
+
+  swim() {
+    this.x += this.speed * this.direction;
+    // Wrap around the screen if the fish moves beyond the canvas boundaries
+    if (this.x < -this.size) {
+      this.x = width + this.size;
+    } else if (this.x > width + this.size) {
+      this.x = -this.size;
+    }
+  }
+
+  display() {
+    fill(255, 204, 0); // Yellow fish color
+    noStroke();
+    ellipse(this.x, this.y, this.size * 2, this.size);
+    triangle(
+      this.x - this.size, this.y,
+      this.x - this.size * 1.5, this.y - this.size / 2,
+      this.x - this.size * 1.5, this.y + this.size / 2
+    );
+  }
 }
