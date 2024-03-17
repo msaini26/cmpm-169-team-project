@@ -497,7 +497,7 @@ class Fish {
   }
 
   display() {
-    fill(255, 204, 0); // Yellow fish color
+    fill(255); // Yellow fish color
     noStroke();
     ellipse(this.x, this.y, this.size * 2, this.size);
     triangle(
