@@ -4,7 +4,6 @@
 //    - collision function instead of keypress
 //    -Collision code between circle and rectangle
 
-
 let video;
 let guyPosition;
 let camActive = false;
@@ -46,12 +45,9 @@ let fish = [];
 let duck;
 
 function preload() {
-
   sound = loadSound("../assets/plop.wav");
-  font = loadFont('../js/Mogent.otf');
-  duck = loadImage('../assets/duck.png');
-
-
+  font = loadFont("../js/Mogent.otf");
+  duck = loadImage("../assets/duck.png");
 }
 
 function setup() {
@@ -87,7 +83,6 @@ function setup() {
 
   guyPosition = createVector(width / 2, height / 2);
 
-
   // Create bubbles
   for (let i = 0; i < 25; i++) {
     bubbles.push(new Bubble());
@@ -121,11 +116,9 @@ function setup() {
   }
 
   henry = new ducky(0.02, -0.01, 0.4, 300, 400);
-
 }
 
 function draw() {
-
   if (camActive) {
     // Display the webcam feed
     image(video, 0, 0, width, height);
@@ -157,7 +150,6 @@ function draw() {
   // background(0, 150, 255);
   background(255);
 
-  
   // draw water #2
   // Camera background when toggled
   if (camActive) {
@@ -184,7 +176,6 @@ function draw() {
   vertex(0, height);
   endShape(CLOSE);
 
-
   //fill with water
   if (isEmpty && addPressed && fillHeight <= 600) {
     fillHeight += 5;
@@ -198,6 +189,7 @@ function draw() {
   //drain the water
   if (isFull && drainPressed && fillHeight >= 0) {
     fillHeight -= 5;
+
   }
   if (fillHeight <= 0) {
     isFull = false;
@@ -213,40 +205,41 @@ function draw() {
   }
 
   for (i = 0; i < floaties.length; i++) {
-
     floaties[i].Update();
 
     // Particles
     let p = new Particle();
     particles.push(p);
-    
-    for(let j = particles.length-1; j >= 0; j--){
-      if(!particles[j].edges()){ 
+
+    for (let j = particles.length - 1; j >= 0; j--) {
+      if (!particles[j].edges()) {
         particles[j].updatePos();
         particles[j].show();
-      }
-      else{
-        particles.splice(j,1);
+      } else {
+        particles.splice(j, 1);
       }
     }
 
     if (floaties[i].y > height + 10) {
-
-      floaties.splice(i, 1)
-
+      floaties.splice(i, 1);
     }
-
   }
 
   // Draw fish
   for (let f of fish) {
     f.display();
     f.swim();
- 
+
+    if (isFull && drainPressed && fillHeight >= 0) {
+      f.moveDown();
+    }
+
+    if (isEmpty && addPressed && fillHeight <= 600) {
+      f.moveUp();
+    }
   }
 
   henry.Update();
-
 }
 
 function toggleCamera() {
@@ -262,34 +255,24 @@ function toggleCamera() {
 }
 
 function keyPressed() {
-
   console.log(keyCode);
 
   if (key == key.toUpperCase()) {
-
     var bouyancy = Math.floor(Math.random() * (2 - 1 + 1)) + 1;
     bouyancy *= 0.01;
-
   } else {
-
     var bouyancy = -0.05;
-
   }
 
   if (key.length <= 1) {
-
     let newLetter = new floaty(0.05, bouyancy, 0.4, mouseX, -25, key);
     floaties.push(newLetter);
-
   }
-
 }
 
 // ===== CLASSES =====
 class floaty {
-
   constructor(fall, bouyancy, bounciness, x, y, letter) {
-
     this.letter = letter;
     this.fallMult = fall;
     this.bouyantMult = bouyancy;
@@ -299,37 +282,32 @@ class floaty {
     this.inWater = false;
     this.x = x;
     this.y = y;
-
   }
 
   DrawMe() {
-
-    fill(51)
+    fill(51);
     //ellipse(this.x, this.y, 50, 50); // draw the circle
     textSize(50);
     text(this.letter, this.x, this.y);
   }
 
   CollisionDetection() {
-
     var collide = -fillHeight + 600 < this.y;
     if (collide) {
+      if (!this.inWater && this.bouyantMult > 0) {
+        this.yspeed *= 0.75;
+      }
 
-      if (!this.inWater && this.bouyantMult > 0) { this.yspeed *= 0.75; }
-      
-      if(!sound.isPlaying() && !this.inWater && this.yspeed > 3) {sound.play()};
+      if (!sound.isPlaying() && !this.inWater && this.yspeed > 3) {
+        sound.play();
+      }
       this.inWater = true;
-
     } else {
-
       this.inWater = false;
-
     }
-
   }
 
   Update() {
-
     this.CollisionDetection(); // check for collision with water
 
     // BOUYANCY -- floats up if in water, falls down if not
@@ -342,19 +320,14 @@ class floaty {
     // GRAVITY
     this.yspeed += gravity * this.currMult * deltaTime;
     this.y += this.yspeed;
-    
+
     if (this.bouyantMult > 0 && this.inWater) {
-
       this.yspeed *= 0.9;
-
     }
 
     this.DrawMe();
-
   }
-
 }
-
 
 // Bubble class
 class Bubble {
@@ -388,37 +361,42 @@ class Bubble {
 }
 
 // Particle Class
-class Particle{
-  constructor(){
+class Particle {
+  constructor() {
     this.pos = p5.Vector.random2D().mult(30); // position
-    this.vel = createVector(0,0); //velocity
+    this.vel = createVector(0, 0); //velocity
     this.acc = this.pos.copy().mult(random(0.01, 0.001)); //acceleration
     this.w = random(3, 5); //width
-    this.color = [random(128,128), random(238,144), random(230,255)] // randomly generated color
+    this.color = [random(128, 128), random(238, 144), random(230, 255)]; // randomly generated color
   }
-  updatePos(){ // updates the velocity and position of particles
+  updatePos() {
+    // updates the velocity and position of particles
     this.vel.add(this.acc);
     this.pos.add(this.vel);
   }
-  edges(){ // if they reach outside the canvas, indicate when to remove the particles
-    if(this.pos.x < -width/2 || this.pos.x > width/2 || this.pos.y < -height/2 || this.pos.y > height/2){
+  edges() {
+    // if they reach outside the canvas, indicate when to remove the particles
+    if (
+      this.pos.x < -width / 2 ||
+      this.pos.x > width / 2 ||
+      this.pos.y < -height / 2 ||
+      this.pos.y > height / 2
+    ) {
       return true;
-    }
-    else{
+    } else {
       return false;
     }
   }
-  show(){ // appearance of the particles
+  show() {
+    // appearance of the particles
     noStroke();
     fill(this.color);
-    ellipse(this.pos.x, this.pos.y, this.w)
+    ellipse(this.pos.x, this.pos.y, this.w);
   }
 }
 
 class ducky {
-
   constructor(fall, bouyancy, bounciness, x, y) {
-
     this.fallMult = fall;
     this.bouyantMult = bouyancy;
     this.bounciness = bounciness;
@@ -427,35 +405,30 @@ class ducky {
     this.inWater = false;
     this.x = x;
     this.y = y;
-
   }
 
   DrawDuck() {
-
-    fill(51)
+    fill(51);
     image(duck, this.x, this.y, 450, 250);
   }
 
   CollisionDetection() {
-
     var collide = -fillHeight + 600 < this.y;
     if (collide) {
+      if (!this.inWater) {
+        this.yspeed *= 0.65;
+      }
 
-      if (!this.inWater) { this.yspeed *= 0.65; }
-      
-      if(!sound.isPlaying() && !this.inWater && this.yspeed > 3) {sound.play()};
+      if (!sound.isPlaying() && !this.inWater && this.yspeed > 3) {
+        sound.play();
+      }
       this.inWater = true;
-
     } else {
-
       this.inWater = false;
-
     }
-
   }
 
   Update() {
-
     this.CollisionDetection(); // check for collision with water
 
     // BOUYANCY -- floats up if in water, falls down if not
@@ -474,19 +447,26 @@ class ducky {
     //this.y = -fillHeight + 600 - 100;
 
     this.DrawDuck();
-
   }
-
 }
 
 // Fish class
 class Fish {
   constructor() {
     this.x = random(width);
-    this.y = random(height);
+    this.y = height;
     this.size = random(10, 30);
     this.speed = random(1, 3);
     this.direction = 1; // -1 for left, 1 for right
+  }
+
+  moveDown() {
+    this.y += this.speed * 2;
+
+  }
+
+  moveUp() {
+    this. y -= this.speed * 2;
   }
 
   swim() {
@@ -500,13 +480,16 @@ class Fish {
   }
 
   display() {
-    fill(255); // Yellow fish color
+    fill(243, 187, 65); // Yellow fish color
     noStroke();
     ellipse(this.x, this.y, this.size * 2, this.size);
     triangle(
-      this.x - this.size, this.y,
-      this.x - this.size * 1.5, this.y - this.size / 2,
-      this.x - this.size * 1.5, this.y + this.size / 2
+      this.x - this.size,
+      this.y,
+      this.x - this.size * 1.5,
+      this.y - this.size / 2,
+      this.x - this.size * 1.5,
+      this.y + this.size / 2
     );
   }
 }
