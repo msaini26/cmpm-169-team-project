@@ -237,10 +237,12 @@ function draw() {
     }
 
   }
+
   // Draw fish
   for (let f of fish) {
     f.display();
     f.swim();
+ 
   }
 
   henry.Update();
