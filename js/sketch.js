@@ -91,9 +91,33 @@ function setup() {
     bubbles.push(new Bubble());
   }
 
-  //add water button
+  // add water button
   let addButton = createButton("add water");
-  addButton.position(835, 200);
+  addButton.position(935, 170);
+
+  // button styling for add water
+  addButton.style("background-color", "#3f51b5");
+  addButton.style("color", "white");
+  addButton.style("font-family", "sans-serif");
+  addButton.style("font-size", "16px");
+  addButton.style("font-weight", "bold");
+  addButton.style("padding", "15px 30px");
+  addButton.style("border", "none");
+  addButton.style("border-radius", "5px");
+  addButton.style("cursor", "pointer");
+  addButton.style("box-shadow", "0px 3px 5px rgba(0, 0, 0, 0.2)");
+  addButton.style("transition", "all 0.2s ease-in-out");
+
+  // add hover effects for add water button
+  addButton.mouseOver(() => {
+    addButton.style("background-color", "#28377d");
+    addButton.style("box-shadow", "0px 5px 10px rgba(0, 0, 0, 0.4)");
+  });
+
+  addButton.mouseOut(() => {
+    addButton.style("background-color", "#3f51b5");
+    addButton.style("box-shadow", "0px 3px 5px rgba(0, 0, 0, 0.2)");
+  });
 
   addButton.mousePressed(() => {
     if (isEmpty) {
@@ -103,7 +127,31 @@ function setup() {
 
   //drain water button
   let drainButton = createButton("drain water");
-  drainButton.position(835, 230);
+  drainButton.position(935, 230);
+
+  // button styling for drain water
+  drainButton.style("background-color", "#3f51b5");
+  drainButton.style("color", "white");
+  drainButton.style("font-family", "sans-serif");
+  drainButton.style("font-size", "16px");
+  drainButton.style("font-weight", "bold");
+  drainButton.style("padding", "15px 30px");
+  drainButton.style("border", "none");
+  drainButton.style("border-radius", "5px");
+  drainButton.style("cursor", "pointer");
+  drainButton.style("box-shadow", "0px 3px 5px rgba(0, 0, 0, 0.2)");
+  drainButton.style("transition", "all 0.2s ease-in-out");
+
+  // hover effect for draining water
+  drainButton.mouseOver(() => {
+    drainButton.style("background-color", "#28377d"); // Darker background on hover
+    drainButton.style("box-shadow", "0px 5px 10px rgba(0, 0, 0, 0.4)"); // More prominent shadow
+  });
+
+  drainButton.mouseOut(() => {
+    drainButton.style("background-color", "#3f51b5");
+    drainButton.style("box-shadow", "0px 3px 5px rgba(0, 0, 0, 0.2)");
+  });
 
   drainButton.mousePressed(() => {
     if (isFull) {
@@ -113,10 +161,33 @@ function setup() {
 
   //add person button
   let personButton = createButton("add person");
-  personButton.position(835, 260);
+  personButton.position(935, 290);
+
+  personButton.style("background-color", "#3f51b5");
+  personButton.style("color", "white");
+  personButton.style("font-family", "sans-serif");
+  personButton.style("font-size", "16px");
+  personButton.style("font-weight", "bold");
+  personButton.style("padding", "15px 30px");
+  personButton.style("border", "none");
+  personButton.style("border-radius", "5px");
+  personButton.style("cursor", "pointer");
+  personButton.style("box-shadow", "0px 3px 5px rgba(0, 0, 0, 0.2)");
+  personButton.style("transition", "all 0.2s ease-in-out");
+
+  // Hover effect for person button
+  personButton.mouseOver(() => {
+    personButton.style("background-color", "#28377d"); // Darker background on hover
+    personButton.style("box-shadow", "0px 5px 10px rgba(0, 0, 0, 0.4)"); // More prominent shadow
+  });
+
+  personButton.mouseOut(() => {
+    personButton.style("background-color", "#3f51b5");
+    personButton.style("box-shadow", "0px 3px 5px rgba(0, 0, 0, 0.2)");
+  });
 
   personButton.mousePressed(() => {
-    if(!personAdded) {
+    if (!personAdded) {
       person = new Person(0.025, -0.03, 0.2, 100, -100); //(fall, bouyancy, bounciness, x, y)
       person.setup();
       personAdded = true;
@@ -207,7 +278,6 @@ function draw() {
   //drain the water
   if (isFull && drainPressed && fillHeight >= 0) {
     fillHeight -= 5;
-
   }
   if (fillHeight <= 0) {
     isFull = false;
@@ -487,11 +557,10 @@ class Fish {
 
   moveDown() {
     this.y += this.speed * 1.5;
-
   }
 
   moveUp() {
-    this. y -= this.speed * 1.5;
+    this.y -= this.speed * 1.5;
   }
 
   swim() {
@@ -549,7 +618,7 @@ class Person {
       if (!this.inWater && this.bouyantMult > 0) {
         this.yspeed *= 0.65;
       }
-  
+
       if (!sound.isPlaying() && !this.inWater && this.yspeed > 3) {
         sound.play();
       }
@@ -564,22 +633,21 @@ class Person {
     let maskImage = createGraphics(width, height);
     maskImage.beginShape();
     for (let angle = 0; angle < TWO_PI; angle += 0.01) {
-      let x = this.maskPosX + cos(angle) * this.diameter / 2;
-      let y = this.maskPosY + sin(angle) * this.diameter / 2;
+      let x = this.maskPosX + (cos(angle) * this.diameter) / 2;
+      let y = this.maskPosY + (sin(angle) * this.diameter) / 2;
       maskImage.vertex(x, y);
     }
     maskImage.endShape(CLOSE);
-    
+
     // Apply the mask
     this.capture.mask(maskImage);
-    
+
     // Draw the masked video
     image(this.capture, this.x, this.y, 300, 300);
     maskImage.remove();
   }
 
   Update() {
-
     this.CollisionDetection(); // check for collision with water
 
     // BOUYANCY -- floats up if in water, falls down if not
