@@ -116,9 +116,11 @@ function setup() {
   personButton.position(835, 260);
 
   personButton.mousePressed(() => {
-    person = new Person(0.025, -0.03, 0.2, 100, -100); //(fall, bouyancy, bounciness, x, y)
-    person.setup();
-    personAdded = true;
+    if(!personAdded) {
+      person = new Person(0.025, -0.03, 0.2, 100, -100); //(fall, bouyancy, bounciness, x, y)
+      person.setup();
+      personAdded = true;
+    }
   });
 
   floaties = [];
