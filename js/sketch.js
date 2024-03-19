@@ -230,12 +230,14 @@ function draw() {
     f.display();
     f.swim();
 
-    if (isFull && drainPressed && fillHeight >= 0) {
+    if (isFull && drainPressed && fillHeight >= 300) {
       f.moveDown();
+      // console.log("fish moving down");
     }
 
-    if (isEmpty && addPressed && fillHeight <= 600) {
+    if (isEmpty && addPressed && fillHeight <= 300) {
       f.moveUp();
+      // console.log("fish moving up");
     }
   }
 
@@ -454,19 +456,20 @@ class ducky {
 class Fish {
   constructor() {
     this.x = random(width);
-    this.y = height;
+    this.y = height + 20;
     this.size = random(10, 30);
+    // this.speedY = random(0.5, 2);
     this.speed = random(1, 3);
     this.direction = 1; // -1 for left, 1 for right
   }
 
   moveDown() {
-    this.y += this.speed * 2;
+    this.y += this.speed * 1.5;
 
   }
 
   moveUp() {
-    this. y -= this.speed * 2;
+    this. y -= this.speed * 1.5;
   }
 
   swim() {
