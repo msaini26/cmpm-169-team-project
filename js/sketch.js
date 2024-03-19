@@ -44,6 +44,9 @@ let fish = [];
 
 let duck;
 
+let person;
+var personAdded = false;
+
 function preload() {
   sound = loadSound("../assets/plop.wav");
   font = loadFont("../js/Mogent.otf");
@@ -73,15 +76,15 @@ function setup() {
 
   // Set up camera
   video = createCapture(VIDEO);
-  video.size(300, 300);
+  video.size(100, 100);
   video.hide();
 
   // Toggle camera button
-  let cameraButton = createButton("Toggle Camera");
-  cameraButton.position(835, 195);
-  cameraButton.mousePressed(toggleCamera);
+  // let cameraButton = createButton("Toggle Camera");
+  // cameraButton.position(835, 195);
+  // cameraButton.mousePressed(toggleCamera);
 
-  guyPosition = createVector(width / 2, height / 2);
+  // guyPosition = createVector(width / 2, height / 2);
 
   // Create bubbles
   for (let i = 0; i < 25; i++) {
@@ -90,7 +93,7 @@ function setup() {
 
   //add water button
   let addButton = createButton("add water");
-  addButton.position(835, 135);
+  addButton.position(835, 200);
 
   addButton.mousePressed(() => {
     if (isEmpty) {
@@ -100,12 +103,22 @@ function setup() {
 
   //drain water button
   let drainButton = createButton("drain water");
-  drainButton.position(835, 165);
+  drainButton.position(835, 230);
 
   drainButton.mousePressed(() => {
     if (isFull) {
       drainPressed = true;
     }
+  });
+
+  //add person button
+  let personButton = createButton("add person");
+  personButton.position(835, 260);
+
+  personButton.mousePressed(() => {
+    person = new Person(0.025, -0.03, 0.2, 100, -100); //(fall, bouyancy, bounciness, x, y)
+    person.setup();
+    personAdded = true;
   });
 
   floaties = [];
@@ -115,7 +128,10 @@ function setup() {
     fish.push(new Fish());
   }
 
-  henry = new ducky(0.02, -0.01, 0.4, 300, 400);
+  henry = new ducky(0.02, -0.01, 0.4, 300, 150);
+
+  // person = new Person(0.025, -0.03, 0.2, 100, 100); //(fall, bouyancy, bounciness, x, y)
+  // person.setup();
 }
 
 function draw() {
@@ -137,9 +153,9 @@ function draw() {
   }
 
   // Draw the little guy
-  fill(255, 0, 0);
-  rectMode(CENTER);
-  rect(guyPosition.x, guyPosition.y, 50, 50);
+  // fill(255, 0, 0);
+  // rectMode(CENTER);
+  // rect(guyPosition.x, guyPosition.y, 50, 50);
 
   // Start the audio context on a click/touch event to prevent it from being blocked by browsers
   if (getAudioContext().state !== "running") {
@@ -152,9 +168,9 @@ function draw() {
 
   // draw water #2
   // Camera background when toggled
-  if (camActive) {
-    image(video, 0, 0, height, width);
-  }
+  // if (camActive) {
+  //   image(video, 0, 0, height, width);
+  // }
   fill(0, 100, 200); //water color
   beginShape();
   for (let x = 0; x <= width; x += 20) {
@@ -242,19 +258,23 @@ function draw() {
   }
 
   henry.Update();
+  if (personAdded) {
+    person.Update();
+  }
+  // person.Update();
 }
 
-function toggleCamera() {
-  if (!camActive) {
-    // Activate the camera
-    camActive = true;
-  } else {
-    // Deactivate the camera
-    camActive = false;
-    // Reset the little guy's position to the center
-    guyPosition = createVector(width / 2, height / 2);
-  }
-}
+// function toggleCamera() {
+//   if (!camActive) {
+//     // Activate the camera
+//     camActive = true;
+//   } else {
+//     // Deactivate the camera
+//     camActive = false;
+//     // Reset the little guy's position to the center
+//     guyPosition = createVector(width / 2, height / 2);
+//   }
+// }
 
 function keyPressed() {
   console.log(keyCode);
@@ -294,7 +314,7 @@ class floaty {
   }
 
   CollisionDetection() {
-    var collide = -fillHeight + 600 < this.y;
+    var collide = -fillHeight + 800 < this.y;
     if (collide) {
       if (!this.inWater && this.bouyantMult > 0) {
         this.yspeed *= 0.75;
@@ -496,3 +516,100 @@ class Fish {
     );
   }
 }
+
+class Person {
+  constructor(fall, bouyancy, bounciness, x, y) {
+    this.capture = null;
+    this.diameter = 200; // Diameter of the circle
+    this.maskPosX = width / 2; // X position of the circle
+    this.maskPosY = height / 2; // Y position of the circle
+    this.fallMult = fall;
+    this.bouyantMult = bouyancy;
+    this.bounciness = bounciness;
+    this.currMult = this.fall;
+    this.yspeed = 0;
+    this.inWater = false;
+    this.x = x;
+    this.y = y;
+  }
+
+  setup() {
+    // Create a capture object
+    this.capture = createCapture(VIDEO);
+    this.capture.size(width, height);
+    this.capture.hide(); // Hide the capture element
+  }
+
+  CollisionDetection() {
+    var collide = -fillHeight + 800 < this.y;
+    if (collide) {
+      // console.log(this.y);
+      if (!this.inWater && this.bouyantMult > 0) {
+        this.yspeed *= 0.65;
+      }
+  
+      if (!sound.isPlaying() && !this.inWater && this.yspeed > 3) {
+        sound.play();
+      }
+      this.inWater = true;
+    } else {
+      this.inWater = false;
+    }
+  }
+
+  drawPerson() {
+    // Create a circular mask
+    let maskImage = createGraphics(width, height);
+    maskImage.beginShape();
+    for (let angle = 0; angle < TWO_PI; angle += 0.01) {
+      let x = this.maskPosX + cos(angle) * this.diameter / 2;
+      let y = this.maskPosY + sin(angle) * this.diameter / 2;
+      maskImage.vertex(x, y);
+    }
+    maskImage.endShape(CLOSE);
+    
+    // Apply the mask
+    this.capture.mask(maskImage);
+    
+    // Draw the masked video
+    image(this.capture, this.x, this.y, 300, 300);
+    maskImage.remove();
+  }
+
+  Update() {
+
+    this.CollisionDetection(); // check for collision with water
+
+    // BOUYANCY -- floats up if in water, falls down if not
+    if (this.inWater == false) {
+      this.currMult = this.fallMult;
+    } else if (this.inWater == true) {
+      this.currMult = this.bouyantMult;
+    }
+
+    // GRAVITY
+    this.yspeed += gravity * this.currMult * deltaTime;
+    this.y += this.yspeed;
+
+    //this.yspeed *= 0.9;
+
+    //this.y = -fillHeight + 600 - 100;
+
+    this.drawPerson();
+  }
+}
+
+// to help with memory leak
+// p5.Graphics.prototype.remove = function() {
+//   if (this.elt.parentNode) {
+//     this.elt.parentNode.removeChild(this.elt);
+//   }
+//   var idx = this._pInst._elements.indexOf(this);
+//   // console.log(this._pInst);
+//   if (idx !== -1) {
+//     this._pInst._elements.splice(idx, 1);
+//   }
+//   for (var elt_ev in this._events) {
+//     this.elt.removeEventListener(elt_ev, this._events[elt_ev]);
+//   }
+// };
