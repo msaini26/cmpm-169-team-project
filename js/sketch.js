@@ -158,7 +158,7 @@ function draw() {
   fill(0, 100, 200); //water color
   beginShape();
   for (let x = 0; x <= width; x += 20) {
-    let y = 600 - fillHeight + sin(x * 0.02 + frameCount * 0.01) * 50;
+    let y = 700 - fillHeight + sin(x * 0.02 + frameCount * 0.01) * 50;
     vertex(x, y);
   }
   vertex(width, height);
@@ -169,7 +169,7 @@ function draw() {
   fill(0, 150, 255); //water color
   beginShape();
   for (let x = 0; x <= width; x += 10) {
-    let y = 600 - fillHeight + sin(x * 0.02 + frameCount * 0.05) * 50;
+    let y = 700 - fillHeight + sin(x * 0.02 + frameCount * 0.05) * 50;
     vertex(x, y);
   }
   vertex(width, height);
@@ -180,7 +180,7 @@ function draw() {
   if (isEmpty && addPressed && fillHeight <= 600) {
     fillHeight += 5;
   }
-  if (fillHeight >= 500) {
+  if (fillHeight >= 600) {
     isFull = true;
     isEmpty = false;
     addPressed = false;
