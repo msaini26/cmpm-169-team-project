@@ -93,7 +93,7 @@ function setup() {
 
   // add water button
   let addButton = createButton("add water");
-  addButton.position(935, 170);
+  addButton.position(1020, 170);
 
   // button styling for add water
   addButton.style("background-color", "#3f51b5");
@@ -127,7 +127,7 @@ function setup() {
 
   //drain water button
   let drainButton = createButton("drain water");
-  drainButton.position(935, 230);
+  drainButton.position(1020, 230);
 
   // button styling for drain water
   drainButton.style("background-color", "#3f51b5");
@@ -161,7 +161,7 @@ function setup() {
 
   //add person button
   let personButton = createButton("add person");
-  personButton.position(935, 290);
+  personButton.position(1020, 290);
 
   personButton.style("background-color", "#3f51b5");
   personButton.style("color", "white");
