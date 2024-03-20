@@ -211,7 +211,7 @@ function setup() {
   duckButton.style("box-shadow", "0px 3px 5px rgba(0, 0, 0, 0.2)");
   duckButton.style("transition", "all 0.2s ease-in-out");
 
-  // Hover effect for person button
+  // Hover effect for duck button
   duckButton.mouseOver(() => {
     duckButton.style("background-color", "#28377d"); // Darker background on hover
     duckButton.style("box-shadow", "0px 5px 10px rgba(0, 0, 0, 0.4)"); // More prominent shadow
@@ -223,11 +223,6 @@ function setup() {
   });
 
   duckButton.mousePressed(() => {
-    // if (!personAdded) {
-    //   person = new Person(0.025, -0.03, 0.2, 100, -100); //(fall, bouyancy, bounciness, x, y)
-    //   person.setup();
-    //   personAdded = true;
-    // }
     if (!duckAdded) {
       henry = new ducky(0.02, -0.01, 0.4, 300, -150);
       duckAdded = true;
@@ -240,11 +235,6 @@ function setup() {
   for (let i = 0; i < 5; i++) {
     fish.push(new Fish());
   }
-
-  // henry = new ducky(0.02, -0.01, 0.4, 300, 150);
-
-  // person = new Person(0.025, -0.03, 0.2, 100, 100); //(fall, bouyancy, bounciness, x, y)
-  // person.setup();
 }
 
 function draw() {
@@ -717,25 +707,6 @@ class Person {
     this.yspeed += gravity * this.currMult * deltaTime;
     this.y += this.yspeed;
 
-    //this.yspeed *= 0.9;
-
-    //this.y = -fillHeight + 600 - 100;
-
     this.drawPerson();
   }
 }
-
-// to help with memory leak
-// p5.Graphics.prototype.remove = function() {
-//   if (this.elt.parentNode) {
-//     this.elt.parentNode.removeChild(this.elt);
-//   }
-//   var idx = this._pInst._elements.indexOf(this);
-//   // console.log(this._pInst);
-//   if (idx !== -1) {
-//     this._pInst._elements.splice(idx, 1);
-//   }
-//   for (var elt_ev in this._events) {
-//     this.elt.removeEventListener(elt_ev, this._events[elt_ev]);
-//   }
-// };
