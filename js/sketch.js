@@ -330,10 +330,19 @@ function draw() {
   }
 
   henry.Update();
+
+  //adding person and removing person if water is empty
   if (personAdded) {
-    person.Update();
+    // person.Update();
+    if(person.y > 600 && fillHeight <= 0) {
+      // person.remove();
+      person = null;
+      personAdded = false;
+      console.log("person removed");
+    } else {
+      person.Update();
+    }
   }
-  // person.Update();
 }
 
 // function toggleCamera() {
