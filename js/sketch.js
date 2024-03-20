@@ -46,6 +46,7 @@ let duck;
 
 let person;
 var personAdded = false;
+var duckAdded = false;
 
 function preload() {
   sound = loadSound("../assets/plop.wav");
@@ -194,6 +195,45 @@ function setup() {
     }
   });
 
+  //add duck button
+  let duckButton = createButton("add duck");
+  duckButton.position(1020, 350);
+
+  duckButton.style("background-color", "#3f51b5");
+  duckButton.style("color", "white");
+  duckButton.style("font-family", "sans-serif");
+  duckButton.style("font-size", "16px");
+  duckButton.style("font-weight", "bold");
+  duckButton.style("padding", "15px 30px");
+  duckButton.style("border", "none");
+  duckButton.style("border-radius", "5px");
+  duckButton.style("cursor", "pointer");
+  duckButton.style("box-shadow", "0px 3px 5px rgba(0, 0, 0, 0.2)");
+  duckButton.style("transition", "all 0.2s ease-in-out");
+
+  // Hover effect for person button
+  duckButton.mouseOver(() => {
+    duckButton.style("background-color", "#28377d"); // Darker background on hover
+    duckButton.style("box-shadow", "0px 5px 10px rgba(0, 0, 0, 0.4)"); // More prominent shadow
+  });
+
+  duckButton.mouseOut(() => {
+    duckButton.style("background-color", "#3f51b5");
+    duckButton.style("box-shadow", "0px 3px 5px rgba(0, 0, 0, 0.2)");
+  });
+
+  duckButton.mousePressed(() => {
+    // if (!personAdded) {
+    //   person = new Person(0.025, -0.03, 0.2, 100, -100); //(fall, bouyancy, bounciness, x, y)
+    //   person.setup();
+    //   personAdded = true;
+    // }
+    if (!duckAdded) {
+      henry = new ducky(0.02, -0.01, 0.4, 300, -150);
+      duckAdded = true;
+    }
+  });
+
   floaties = [];
 
   // Create fish
@@ -201,7 +241,7 @@ function setup() {
     fish.push(new Fish());
   }
 
-  henry = new ducky(0.02, -0.01, 0.4, 300, 150);
+  // henry = new ducky(0.02, -0.01, 0.4, 300, 150);
 
   // person = new Person(0.025, -0.03, 0.2, 100, 100); //(fall, bouyancy, bounciness, x, y)
   // person.setup();
@@ -329,13 +369,20 @@ function draw() {
     }
   }
 
-  henry.Update();
+  //adding duck and removing duck if water is empty
+  if (duckAdded) {
+    if(henry.y > 600 && fillHeight <= 0) {
+      henry = null;
+      duckAdded = false;
+      console.log("duck removed");
+    } else {
+      henry.Update();
+    }
+  }
 
   //adding person and removing person if water is empty
   if (personAdded) {
-    // person.Update();
     if(person.y > 600 && fillHeight <= 0) {
-      // person.remove();
       person = null;
       personAdded = false;
       console.log("person removed");
